@@ -1,13 +1,8 @@
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -16,8 +11,6 @@ const ai = new GoogleGenAI({
 });
 
 app.use(express.json());
-
-app.use(express.static(path.join(__dirname, "public")));
 
 app.post("/api/ask", async (req, res) => {
   try {
