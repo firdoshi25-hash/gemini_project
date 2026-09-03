@@ -3,39 +3,43 @@ const askButton = document.getElementById("askButton");
 const answer = document.getElementById("answer");
 
 askButton.addEventListener("click", async () => {
-  const question = questionInput.value.trim();
-  if (question === "") {
-    answer.textContent = "Please enter a question.";
-    return;
-  }
 
-  answer.textContent = "Loading...";
+    const question = questionInput.value.trim();
 
-  try {
+    if (question === "") {
+        answer.textContent = "Please enter a question.";
+        return;
+    }
 
-    const response = await fetch("/api/ask", {
-      method: "POST",
+    answer.textContent = "Thinking...";
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+    try {
 
-      body: JSON.stringify({
-        question: question
-      })
-    });
+        const response = await fetch("/api/ask", {
+            method: "POST",
 
-    const data = await response.json();
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-    answer.textContent = data.answer;
+            body: JSON.stringify({
+                question: question
+            })
+        });
 
-  } catch (error) {
+        const data = await response.json();
 
-    console.error(error);
+        if (!response.ok) {
+            answer.textContent = data.error || "Something went wrong.";
+            return;
+        }
 
-    answer.textContent =
-      `error: ${error}`
+        answer.textContent = data.answer;
 
-  }
+    } catch (error) {
 
+        console.error(error);
+
+        answer.textContent = "Unable to connect to the server.";
+    }
 });
