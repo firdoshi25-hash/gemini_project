@@ -5,14 +5,15 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 
-dotenv.config();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+// Local development
+dotenv.config({
+  path: path.join(__dirname, "backend", ".env"),
+});
 
-const PORT = process.env.PORT || 3000;
+const app = express();
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -21,16 +22,11 @@ const ai = new GoogleGenAI({
 app.use(cors());
 app.use(express.json());
 
-// Frontend folder
-app.use(
-  express.static(path.join(__dirname, "../frontend"))
-);
+// Serve frontend
+app.use(express.static(path.join(__dirname, "public")));
 
-// Home page
 app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../frontend/index.html")
-  );
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Test API
@@ -68,9 +64,10 @@ app.post("/api/ask", async (req, res) => {
   }
 });
 
-// Start server
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(
-    `Server is running on http://localhost:${PORT}`
-  );
+  console.log(`Server running on port ${PORT}`);
 });
+
+export default app;
